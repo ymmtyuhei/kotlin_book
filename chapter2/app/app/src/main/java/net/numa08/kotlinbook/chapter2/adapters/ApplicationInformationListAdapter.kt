@@ -63,7 +63,7 @@ class ApplicationInformationListAdapter : RecyclerView.Adapter<ApplicationInform
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val vm = holder.binding.viewModel ?: return
         vm.applicationInformation = informationList[position].first
-        vm.setProcessInformation(informationList[position].second)
+        vm.setProcessInformation(informationList[position].second!!)
         vm.setOnClickListener {
             onItemClickListener?.invoke(holder.adapterPosition, holder.binding)
         }
