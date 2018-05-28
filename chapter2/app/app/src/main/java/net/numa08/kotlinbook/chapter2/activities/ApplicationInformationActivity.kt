@@ -38,15 +38,16 @@ class ApplicationInformationActivity : AppCompatActivity(), ApplicationInformati
                 this,
                 (application as Chapter2Application).applicationInformationRepository
         )
-        binding.viewModel.onCreate()
+        val vm = binding.viewModel ?: return
+        vm.onCreate()
         val packageName = intent.getStringExtra(ARG_APPLICATION_INFORMATION_PACKAGE)
-        binding.list.adapter = binding.viewModel.adapter
-        binding.viewModel.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+        this.binding.list.adapter = binding.viewModel!!.adapter
+        vm.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
                 if (propertyId != BR.applicationInformation) {
                     return
                 }
-                val applicationInformation = binding.viewModel.applicationInformation ?: return
+                val applicationInformation = binding.viewModel!!.applicationInformation ?: return
                 val actionBar = requireNotNull(supportActionBar, { "setSupportActionBar が呼ばれていません。setSupportActionBar を呼び出してください" })
                 actionBar.title = applicationInformation.label
                 applicationInformation.vibrantRGB?.let { vibrantRGB ->
@@ -69,18 +70,18 @@ class ApplicationInformationActivity : AppCompatActivity(), ApplicationInformati
             }
         })
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            binding.viewModel.fetchApplication(packageName)
+            vm.fetchApplication(packageName)
         }
     }
 
     override fun onEnterAnimationComplete() {
         super.onEnterAnimationComplete()
         val packageName = intent.getStringExtra(ARG_APPLICATION_INFORMATION_PACKAGE)
-        binding.viewModel.fetchApplication(packageName)
+        binding.viewModel?.fetchApplication(packageName)
     }
 
     override fun onDestroy() {
-        binding.viewModel.onDestroy()
+        binding.viewModel?.onDestroy()
         super.onDestroy()
     }
 

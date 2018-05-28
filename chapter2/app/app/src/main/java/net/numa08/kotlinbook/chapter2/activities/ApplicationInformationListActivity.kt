@@ -24,12 +24,13 @@ class ApplicationInformationListActivity : AppCompatActivity() {
         binding.viewModel = ApplicationInformationListViewModel(
                 (application as Chapter2Application).applicationInformationRepository,
                 (application as Chapter2Application).processInformationRepository)
-        binding.viewModel.onCreate()
+        val vm = binding.viewModel ?: return
+        vm.onCreate()
         setSupportActionBar(binding.toolbar)
 
         val actionbar = requireNotNull(supportActionBar, { "setSupportActionBar が呼ばれていません。setSupportActionBar を呼び出してください" })
         actionbar.setTitle(R.string.app_name)
-        binding.list.adapter = binding.viewModel.adapter
+        binding.list.adapter = vm.adapter
         binding.list.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!isAllowedUsageStatsAccess()) {
@@ -42,13 +43,13 @@ class ApplicationInformationListActivity : AppCompatActivity() {
                             finish()
                         }.setCancelable(false).create().show()
             } else {
-                binding.viewModel.fetchApplication()
+                vm.fetchApplication()
             }
         } else {
-            binding.viewModel.fetchApplication()
+            vm.fetchApplication()
         }
-        binding.viewModel.setOnClickListener({ _, _, binding ->
-                    val applicationInformation = binding.viewModel.applicationInformation ?: return@setOnClickListener
+        vm.setOnClickListener({ _, _, binding ->
+                    val applicationInformation = binding.viewModel!!.applicationInformation ?: return@setOnClickListener
                     val intent = ApplicationInformationActivity.getIntent(this@ApplicationInformationListActivity, applicationInformation)
                     startActivity(intent,
                             ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -61,7 +62,7 @@ class ApplicationInformationListActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        binding.viewModel.onDestroy()
+        binding.viewModel?.onDestroy()
         super.onDestroy()
     }
 }
